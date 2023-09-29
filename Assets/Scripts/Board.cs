@@ -2,19 +2,24 @@ using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+
+
 public class Board : MonoBehaviour
 {
-    [SerializeField]  int _width;
-    [SerializeField]  int _height;
+    [SerializeField] int _width;
+    [SerializeField] int _height;
+    public int Width { get => _width;}
+    public int Height { get => _height;}
     [SerializeField] float _scale;
     [SerializeField] Gem[] _gems;
     
     [SerializeField]  GameObject _backgroundPrefabTile;
-    Gem[,] _gemsOnBoard;
+    public Gem[,] GemsOnBoard { get; private set; }
+
 
     void Start()
     {
-        _gemsOnBoard = new Gem[_width, _height];
+        GemsOnBoard = new Gem[_width, _height];
         SetUp();
     }
 
@@ -44,6 +49,6 @@ public class Board : MonoBehaviour
         gem.transform.parent = transform;
         gem.name = $"Gem: {pos.x},{pos.y}";
         gem.SetUpGem(new Vector2(pos.x, pos.y), this);
-        _gemsOnBoard[pos.x, pos.y] = gem;
+        GemsOnBoard[pos.x, pos.y] = gem;
     }
 }
