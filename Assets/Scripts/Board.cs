@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -8,22 +7,20 @@ public class Board : MonoBehaviour
 {
     [SerializeField] int _width;
     [SerializeField] int _height;
-    public int Width { get => _width;}
-    public int Height { get => _height;}
     [SerializeField] float _scale;
     [SerializeField] Gem[] _gems;
-    
     [SerializeField]  GameObject _backgroundPrefabTile;
-    public Gem[,] GemsOnBoard { get; private set; }
-
+    Gem[,] _gemsOnBoard;
+    Gem _firstGem;
+    Gem _otherGem;
 
     void Start()
     {
-        GemsOnBoard = new Gem[_width, _height];
+        _gemsOnBoard = new Gem[_width, _height];
         SetUp();
     }
 
-    private void SetUp()
+    void SetUp()
     {
         for (int x = 0; x < _width; x++)
         {
@@ -43,12 +40,49 @@ public class Board : MonoBehaviour
         transform.localScale = new Vector3(_scale, _scale, _scale);
     }
 
-    private void SpawnGem(Vector2Int pos,Gem gemPrefab)
+    void SpawnGem(Vector2Int pos,Gem gemPrefab)
     {
         Gem gem = Instantiate(gemPrefab, new Vector3(pos.x, pos.y,0), Quaternion.identity);
         gem.transform.parent = transform;
         gem.name = $"Gem: {pos.x},{pos.y}";
         gem.SetUpGem(new Vector2(pos.x, pos.y), this);
-        GemsOnBoard[pos.x, pos.y] = gem;
+        _gemsOnBoard[pos.x, pos.y] = gem;
+    }
+    
+    public void MoveGems(Vector2Int firstGemPos, float swipeAngle)
+    {
+        _firstGem = _gemsOnBoard[firstGemPos.x, firstGemPos.y];
+            //UP
+        if (swipeAngle is >= -45 and < 45 && (_firstGem.PosY + 1) < _height)
+        {
+            _otherGem = _gemsOnBoard[_firstGem.PosX, _firstGem.PosY + 1];
+            _otherGem.PosY --;
+            _firstGem.PosY ++;
+            
+        } else if (swipeAngle is >= 45 and < 135 && (_firstGem.PosX + 1) < _width)
+            //RIGHT
+        {
+            _otherGem = _gemsOnBoard[_firstGem.PosX + 1, _firstGem.PosY];
+            _otherGem.PosX --;
+            _firstGem.PosX ++;
+
+        } else if (swipeAngle is < -45 and >= -135 &&  _firstGem.PosX > 0)
+            //LEFT
+        {
+            _otherGem = _gemsOnBoard[_firstGem.PosX - 1, _firstGem.PosY];
+            _otherGem.PosX ++;
+            _firstGem.PosX --;
+
+        } else if (swipeAngle is < -135 or >= 135 &&  _firstGem.PosY > 0)
+            //DOWN
+        {
+            _otherGem = _gemsOnBoard[_firstGem.PosX, _firstGem.PosY - 1];
+            _otherGem.PosY ++;
+            _firstGem.PosY --;
+
+        }
+        _gemsOnBoard[_firstGem.PosX, _firstGem.PosY] = _firstGem;
+        _gemsOnBoard[_otherGem.PosX, _otherGem.PosY] = _otherGem;
+
     }
 }

@@ -1,14 +1,22 @@
-using System;
-using System.Collections;
 using UnityEngine;
 
 public class Gem : MonoBehaviour
 {
-    [SerializeField] Vector2 _pos;
+    Vector2 _pos;
+
+    public int PosX
+    {
+        get { return (int)_pos.x; }
+        set { _pos.x = value; }
+    }
+    public int PosY
+    {
+        get { return (int)_pos.y; }
+        set { _pos.y = value; }
+    }
 
     [SerializeField] float _gemSpeed;
     Board _board;
-    Gem _otherGem;
     Vector2 _startTouchPosition;
     Vector2 _finishTouchPosition;
     bool _touchPressed;
@@ -17,14 +25,10 @@ public class Gem : MonoBehaviour
     void Update()
     {
         if (Vector2.Distance(transform.localPosition, _pos) > .01f)
-        {
             transform.localPosition = Vector2.Lerp(transform.localPosition, _pos, _gemSpeed * Time.deltaTime);
-        }
         else
-        {
             transform.localPosition = _pos;
-            _board.GemsOnBoard[(int)_pos.x, (int)_pos.y] = this;
-        }
+        
         if (_touchPressed && Input.GetMouseButtonUp(0))
         {
             _touchPressed = false;
@@ -34,7 +38,7 @@ public class Gem : MonoBehaviour
                 CalculateAngle();
                 if (Vector2.Distance(_finishTouchPosition, _startTouchPosition) > 0.5f)
                 {
-                    MoveGem();
+                    _board.MoveGems(new Vector2Int(PosX,PosY), _swipeAngle);
                 }
                 
             }
@@ -43,7 +47,7 @@ public class Gem : MonoBehaviour
 
     public void SetUpGem(Vector2 pos, Board board)
     {
-        _pos = pos;
+        this._pos = pos;
         _board = board;
     }
 
@@ -63,40 +67,5 @@ public class Gem : MonoBehaviour
         _swipeAngle = _swipeAngle * 180 / Mathf.PI;
         
     }
-
-    void MoveGem()
-    {
-            //UP
-        if (_swipeAngle is >= -45 and < 45 && (_pos.y + 1) < _board.Height)
-        {
-            _otherGem = _board.GemsOnBoard[(int)_pos.x, (int)_pos.y + 1];
-            _otherGem._pos.y --;
-            _pos.y ++;
-            
-        } else if (_swipeAngle is >= 45 and < 135 && (_pos.x + 1) < _board.Width)
-            //RIGHT
-        {
-            _otherGem = _board.GemsOnBoard[(int)_pos.x + 1, (int)_pos.y];
-            _otherGem._pos.x --;
-            _pos.x ++;
-
-        } else if (_swipeAngle is < -45 and >= -135 &&  _pos.x > 0)
-            //LEFT
-        {
-            _otherGem = _board.GemsOnBoard[(int)_pos.x - 1, (int)_pos.y];
-            _otherGem._pos.x ++;
-            _pos.x --;
-
-        } else if (_swipeAngle is < -135 or >= 135 &&  _pos.y > 0)
-            //DOWN
-        {
-            _otherGem = _board.GemsOnBoard[(int)_pos.x, (int)_pos.y - 1];
-            _otherGem._pos.y ++;
-            _pos.y --;
-
-        }
-        _board.GemsOnBoard[(int)_pos.x, (int)_pos.y] = this;
-        _board.GemsOnBoard[(int)_otherGem._pos.x, (int)_otherGem._pos.y] = _otherGem;
-
-    }
+    
 }
