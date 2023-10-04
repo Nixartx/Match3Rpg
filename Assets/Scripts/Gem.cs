@@ -14,6 +14,12 @@ public class Gem : MonoBehaviour
         get { return (int)_pos.y; }
         set { _pos.y = value; }
     }
+    [SerializeField] GemType _gemType;
+
+    public GemType GemType
+    {
+        get { return _gemType; }
+    }
 
     [SerializeField] float _gemSpeed;
     Board _board;
@@ -21,6 +27,12 @@ public class Gem : MonoBehaviour
     Vector2 _finishTouchPosition;
     bool _touchPressed;
     float _swipeAngle=0;
+    [SerializeField] bool _isMatched;
+    public bool IsMatched
+    {
+        get { return _isMatched; }
+        set { _isMatched = value; }
+    }
 
     void Update()
     {
@@ -68,4 +80,9 @@ public class Gem : MonoBehaviour
         
     }
     
+}
+
+public enum GemType
+{
+    Red,Yellow,Purple,Green,Blue
 }

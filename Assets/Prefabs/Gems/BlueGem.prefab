@@ -99,6 +99,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gemSpeed: 7
+  _gemType: 4
 --- !u!61 &8283715041072324811
 BoxCollider2D:
   m_ObjectHideFlags: 0
